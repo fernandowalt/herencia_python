@@ -1,9 +1,11 @@
 from os import system
 
+
 class Persona:
     def __init__(self, nombre, apellido):
         self.nombre = nombre
         self.apellido = apellido
+
 
 class Cliente(Persona):
 
@@ -11,27 +13,33 @@ class Cliente(Persona):
         super().__init__(nombre, apellido)
         self.numero_cuenta = numero_cuenta
         self.balance = balance
+
     def __str__(self):
-       return f"""
-             nombre: {self.nombre}
-             apellido: {self.apellido}
-             numero de cuenta: {self.numero_cuenta}
-             balance: {self.balance}
-             """  
+        return f"nombre: {self.nombre}\napellido: {self.apellido}\nnumero de cuenta: {self.numero_cuenta}\nbalance: {self.balance}\n"
+
     def depositar(self, valor: int):
 
         self.balance += valor
 
     def retirar(self, valor: int):
-        self.balance -= valor
+
+        if self.balance >= valor:
+            self.balance -= valor
+
+            return True
+        else:
+            return False
+
 
 def crear_cliente():
     nombre = input("nombre de cliente: ")
     apellido = input("apellido de cliente: ")
     n_cuenta = int(input("numero de cuenta: "))
     balance = int(input("balance: "))
+    cliente = Cliente(nombre, apellido, n_cuenta, balance)
 
-    return {"nombre": nombre, "apellido": apellido, "n_cuenta": n_cuenta, "balance": balance}
+    return cliente
+
 
 def validar_opcion():
 
@@ -47,25 +55,27 @@ def validar_opcion():
         respuesta = input(f"por favor elige una opción valida (1-3: ")
     return int(respuesta)
 
-def validar_retiro(limite):
+
+def validar_retiro():
+
     cantidad = input("ingrese la cantidad a retirar: ")
-    while not cantidad.isnumeric() or int(cantidad) > limite:
-        cantidad = input(
-            f"por favor ingrese una cantidad en numeros menor a {limite}: ")
+    while not cantidad.isnumeric():
+        cantidad = input(f"por favor ingrese una cantidad en numeros")
+
     return int(cantidad)
 
+
 def validar_deposito():
+
     cantidad = input("ingrese la cantidad a depositar: ")
-    while not cantidad.isnumeric() or int(cantidad) < 1:
-        cantidad = input("por favor ingrese una cantidad numerica: ")
+    while not cantidad.isnumeric():
+        cantidad = input("por favor ingrese una cantidad en numeros: ")
     return int(cantidad)
 
 
 def inicio():
-    data = crear_cliente()
+    cliente = crear_cliente()
     system("clear")
-    cliente = Cliente(data['nombre'], data['apellido'],
-                      data['n_cuenta'], data['balance'])
 
     opcion = 1
     while opcion in range(1, 3):
@@ -84,26 +94,22 @@ def inicio():
                 system("clear")
 
             case 2:
-                retiro = validar_retiro(cliente.balance)
+                retiro = validar_retiro()
                 system("clear")
-                cliente.retirar(retiro)
-                system("clear")
-                print(cliente)
-                input("oprima enter para continuar ")
-                system("clear")
+                resultado = cliente.retirar(retiro)
+                if resultado:
+                    print("retiro realizado\n")
+                    print(cliente)
+                    input("presione enter para continuar")
+                    system("clear")
+                else:
+                    print("fondos insuficientes\n")
+                    print(cliente)
+                    input("presione enter para continuar")
+                    system("clear")
 
             case 3:
                 return
 
+
 inicio()
-
-
-
-
-
-
-
-
-
-
-
